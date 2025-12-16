@@ -7,8 +7,6 @@ const Ventas = () => {
   const [ventaSeleccionada, setVentaSeleccionada] = useState(null);
   const [loading, setLoading] = useState(false);
   const [productosEnVenta, setProductosEnVenta] = useState([]);
-  const [metodoPago, setMetodoPago] = useState("efectivo"); // Método de pago seleccionado
-  const [total, setTotal] = useState(0); // Total dinámico
   const comprobanteRef = useRef();
 
   useEffect(() => {
@@ -38,40 +36,29 @@ const Ventas = () => {
 
     if (!id_producto || !precio) return;
 
-    setProductosEnVenta(prev => {
-      const nuevos = [...prev, { id_producto, precio }];
-      const sumaTotal = nuevos.reduce((sum, p) => sum + Number(p.precio), 0);
-      setTotal(sumaTotal);
-      return nuevos;
-    });
+    setProductosEnVenta(prev => [...prev, { id_producto, precio }]);
   };
 
   const confirmarVenta = async () => {
-    if (productosEnVenta.length === 0) {
-      return alert("No hay productos en la venta");
-    }
+  if (productosEnVenta.length === 0) return alert("No hay productos en la venta");
 
-    const datos = {
-      metodo_pago: metodoPago,
-      total,
-      detalles: productosEnVenta
-    };
+  const total = productosEnVenta.reduce((sum, p) => sum + Number(p.precio), 0);
 
-    try {
-      const res = await crearVenta(datos);
-      alert("Venta creada ID: " + res.id_venta);
-
-      await verVenta(res.id_venta);
-
-      setProductosEnVenta([]);
-      setMetodoPago("efectivo"); // Resetear método de pago
-      setTotal(0); // Resetear total
-      cargarVentas();
-    } catch (err) {
-      console.error(err);
-      alert("Error al crear la venta");
-    }
+  const datos = {
+    metodo_pago: "efectivo",
+    total,
+    detalles: productosEnVenta
   };
+
+  const res = await crearVenta(datos);
+  alert("Venta creada ID: " + res.id_venta);
+
+  await verVenta(res.id_venta);
+
+  setProductosEnVenta([]);
+  cargarVentas();
+};
+
 
   const imprimirComprobante = () => {
     if (!ventaSeleccionada) return;
@@ -106,7 +93,7 @@ const Ventas = () => {
         Gestión de Ventas
       </h2>
 
-      {/* AGREGAR PRODUCTOS Y SELECCIONAR MÉTODO DE PAGO */}
+      {/* AGREGAR PRODUCTOS */}
       <div className="bg-white shadow-lg rounded-xl p-6">
         <h3 className="text-xl font-semibold mb-4 text-gray-700">
           Agregar producto por QR
@@ -124,19 +111,7 @@ const Ventas = () => {
           }}
         />
 
-        <div className="mb-4">
-          <label className="block mb-1 font-medium text-gray-700">Método de pago:</label>
-          <select
-            value={metodoPago}
-            onChange={(e) => setMetodoPago(e.target.value)}
-            className="border rounded-lg p-2 w-full"
-          >
-            <option value="efectivo">Efectivo</option>
-            <option value="qr">QR</option>
-          </select>
-        </div>
-
-        <div className="max-h-60 overflow-y-auto border rounded-lg mb-2">
+        <div className="max-h-60 overflow-y-auto border rounded-lg">
           <ul>
             {productosEnVenta.map((p, i) => (
               <li
@@ -152,11 +127,6 @@ const Ventas = () => {
               </li>
             ))}
           </ul>
-        </div>
-
-        {/* Total dinámico */}
-        <div className="flex justify-end mt-2 font-semibold text-lg">
-          Total: Bs {Number(total).toFixed(2)}
         </div>
 
         <div className="flex justify-end mt-4">
@@ -186,7 +156,8 @@ const Ventas = () => {
                   className="border rounded-lg p-3 flex justify-between items-center"
                 >
                   <span className="text-gray-700">
-                    ID: {v.id_venta} | Bs {Number(v.total).toFixed(2)} | {v.nombre_usuario} | {v.metodo_pago}
+                    ID: {v.id_venta} | Bs{" "}
+                    {Number(v.total).toFixed(2)} | {v.nombre_usuario}
                   </span>
                   <button
                     onClick={() => verVenta(v.id_venta)}

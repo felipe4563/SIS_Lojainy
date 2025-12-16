@@ -4,8 +4,13 @@ import db from '../config/db.js';
  * Crear venta con detalles
  */
 export const crearVenta = async (req, res) => {
-  const { id_usuario, metodo_pago, total, detalles } = req.body;
-  // detalles = [{ id_producto, precio }]
+  const { metodo_pago, total, detalles } = req.body;
+  const id_usuario = req.user.id_usuario; // Obtenemos del token
+
+  const METODOS_VALIDOS = ['efectivo', 'qr'];
+  if (!METODOS_VALIDOS.includes(metodo_pago)) {
+  return res.status(400).json({ message: 'Método de pago inválido' });
+  }
 
   if (!Array.isArray(detalles) || detalles.length === 0) {
     return res.status(400).json({ message: "Debe enviar al menos un producto" });
@@ -23,7 +28,7 @@ export const crearVenta = async (req, res) => {
 
     const id_venta = ventaResult.insertId;
 
-    // Insertar detalle de venta
+    // Insertar detalle de venta y reducir stock
     for (let item of detalles) {
       const { id_producto, precio } = item;
       await conn.query(
@@ -31,7 +36,6 @@ export const crearVenta = async (req, res) => {
         [id_venta, id_producto, precio]
       );
 
-      // Opcional: reducir stock del producto
       await conn.query(
         `UPDATE productos SET stock = stock - 1 WHERE id_producto = ?`,
         [id_producto]
@@ -49,23 +53,29 @@ export const crearVenta = async (req, res) => {
   }
 };
 
+
 /**
  * Listar ventas
  */
 export const listarVentas = async (req, res) => {
   try {
+    const id_usuario = req.user.id_usuario; // Obtenemos del token
+
     const [ventas] = await db.query(`
       SELECT v.id_venta, v.id_usuario, v.fecha, v.metodo_pago, v.total, u.nombre AS nombre_usuario
       FROM ventas v
       LEFT JOIN usuarios u ON v.id_usuario = u.id_usuario
+      WHERE v.id_usuario = ?
       ORDER BY v.id_venta DESC
-    `);
+    `, [id_usuario]);
+
     res.json(ventas);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Error al listar ventas' });
   }
 };
+
 
 /**
  * Obtener venta por ID con detalles
@@ -87,12 +97,18 @@ export const obtenerVenta = async (req, res) => {
     const venta = ventas[0];
 
     const [detalles] = await db.query(
-      `SELECT dv.id_detalle, dv.id_producto, p.descripcion AS nombre_producto, dv.precio
-       FROM detalle_venta dv
-       LEFT JOIN productos p ON dv.id_producto = p.id_producto
-       WHERE dv.id_venta = ?`,
-      [id]
-    );
+    `SELECT 
+      dv.id_detalle,
+      dv.id_producto,
+      p.descripcion AS nombre_producto,
+      p.categoria,
+      p.color,
+      dv.precio
+   FROM detalle_venta dv
+   LEFT JOIN productos p ON dv.id_producto = p.id_producto
+   WHERE dv.id_venta = ?`,
+  [id]
+);
 
     venta.detalles = detalles;
 

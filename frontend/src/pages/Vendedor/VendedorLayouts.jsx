@@ -2,10 +2,10 @@ import { useContext, useState } from 'react';
 import { AuthContext } from '../../context/AuthContext.jsx';
 
 // Importar componentes
-import Dashboard from '../../pages/Administrador/Componentes/Dashboard.jsx';
-import Ventas from '../Administrador/Componentes/Ventas.jsx';
+import Dashboard from '../Vendedor/Componentes/Dashboard.jsx';
+import Ventas from '../Vendedor/Componentes/ventas.jsx';
 import Productos from './Componentes/Productos.jsx';
-import Reportes from '../../pages/Administrador/Componentes/Reportes.jsx';
+import Reportes from '../Vendedor/Componentes/Reportes.jsx';
 import { 
   FaHome,           // Dashboard
   FaShoppingCart,   // Ventas
