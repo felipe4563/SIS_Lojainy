@@ -32,7 +32,7 @@ const ComprobanteVenta = forwardRef(({ venta }, ref) => {
   };
 
   // Formatear moneda
-  const formatearMoneda = (valor) => `Bs ${Number(valor).toFixed(2)}`;
+  const formatearMoneda = (valor) => `**Bs ${Number(valor).toFixed(2)}**`;
 
   return (
     <div ref={ref} className="print-container">
@@ -52,7 +52,7 @@ const ComprobanteVenta = forwardRef(({ venta }, ref) => {
         }
 
         .header { text-align: center; margin-bottom: 8px; }
-        .logo { width: 70px; display: block; margin: 0 auto 4px; }
+        .logo { width: 85px; display: block; margin: 0 auto 4px; } /* Aumentado de 70px a 85px */
         .title { font-size: 15px; font-weight: 900; margin: 4px 0; text-transform: uppercase; }
         .subtitle { font-size: 11px; font-weight: bold; margin-bottom: 8px; border-bottom: 1px solid #000; padding-bottom: 4px; display: inline-block; }
         .divider { border-top: 2px solid #000; margin: 10px 0; width: 100%; }
@@ -85,28 +85,28 @@ const ComprobanteVenta = forwardRef(({ venta }, ref) => {
       <div className="ticket-container">
         <div className="header">
           <img src={logoImg} alt="Logo LOJAINY" className="logo"/>
-          <h1 className="title">LOJAINY</h1>
-          <div className="subtitle">COMPROBANTE DE VENTA</div>
+          <h1 className="title">**LOJAINY**</h1>
+          <div className="subtitle">**COMPROBANTE DE VENTA**</div>
         </div>
 
         <div className="divider"></div>
 
         <div className="info-section">
           <div className="info-row">
-            <span className="info-label">N° VENTA:</span>
-            <span className="info-value">#{id_venta.toString().padStart(6,'0')}</span>
+            <span className="info-label">**N° VENTA:**</span>
+            <span className="info-value">**#{id_venta.toString().padStart(6,'0')}**</span>
           </div>
           <div className="info-row">
-            <span className="info-label">FECHA Y HORA:</span>
-            <span className="info-value">{formatearFecha(fecha)}</span>
+            <span className="info-label">**FECHA Y HORA:**</span>
+            <span className="info-value">**{formatearFecha(fecha)}**</span>
           </div>
           <div className="info-row">
-            <span className="info-label">ATENDIDO POR:</span>
-            <span className="info-value">{nombre_usuario.toUpperCase()}</span>
+            <span className="info-label">**ATENDIDO POR:**</span>
+            <span className="info-value">**{nombre_usuario.toUpperCase()}**</span>
           </div>
           <div className="info-row">
-            <span className="info-label">FORMA DE PAGO:</span>
-            <span className="info-value">{metodo_pago.toUpperCase()}</span>
+            <span className="info-label">**FORMA DE PAGO:**</span>
+            <span className="info-value">**{metodo_pago.toUpperCase()}**</span>
           </div>
         </div>
 
@@ -115,22 +115,22 @@ const ComprobanteVenta = forwardRef(({ venta }, ref) => {
         <table className="products-table">
           <thead>
             <tr>
-              <th className="product-name">PRODUCTO</th>
-              <th className="product-qty">CANT.</th>
-              <th className="product-price">SUBTOTAL</th>
+              <th className="product-name">**PRODUCTO**</th>
+              <th className="product-qty">**CANT.**</th>
+              <th className="product-price">**SUBTOTAL**</th>
             </tr>
           </thead>
           <tbody>
             {detalles.map((detalle, index) => (
               <tr key={`${detalle.id_producto}-${index}`}>
                 <td className="product-name">
-                  {detalle.nombre_producto}
+                  **{detalle.nombre_producto}**
                   <div className="product-info">
                     {detalle.categoria} - {detalle.color}
                   </div>
                 </td>
-                <td className="product-qty">{detalle.cantidad || 1}</td>
-                <td className="product-price">{formatearMoneda(detalle.precio * (detalle.cantidad || 1))}</td>
+                <td className="product-qty">**{detalle.cantidad || 1}**</td>
+                <td className="product-price">**{formatearMoneda(detalle.precio * (detalle.cantidad || 1))}**</td>
               </tr>
             ))}
           </tbody>
@@ -140,28 +140,28 @@ const ComprobanteVenta = forwardRef(({ venta }, ref) => {
 
         <div className="total-section">
           <div className="total-row">
-            <span>TOTAL A PAGAR</span>
-            <span>{formatearMoneda(total)}</span>
+            <span>**TOTAL A PAGAR**</span>
+            <span>**{formatearMoneda(total)}**</span>
           </div>
         </div>
 
         <div className="divider"></div>
 
         <div className="redes-sociales">
-          <div className="redes-title">Síguenos en nuestras redes</div>
-          <div className="redes-item">📱 WhatsApp: {redesSociales.whatsapp}</div>
-          <div className="redes-item">📸 Instagram: {redesSociales.instagram}</div>
-          <div className="redes-item">🎵 TikTok: {redesSociales.tiktok}</div>
+          <div className="redes-title">**Síguenos en nuestras redes**</div>
+          <div className="redes-item">**📱 WhatsApp: {redesSociales.whatsapp}**</div>
+          <div className="redes-item">**📸 Instagram: {redesSociales.instagram}**</div>
+          <div className="redes-item">**🎵 TikTok: {redesSociales.tiktok}**</div>
         </div>
 
         <div className="light-divider"></div>
 
         <div className="footer">
-          <div className="footer-message">¡Gracias por su compra!</div>
-          <div>Visítenos nuevamente</div>
-          <div className="print-info">Comprobante emitido: {new Date().toLocaleString('es-BO')}</div>
+          <div className="footer-message">**¡Gracias por su compra!**</div>
+          <div>**Visítenos nuevamente**</div>
+          <div className="print-info">**Comprobante emitido: {new Date().toLocaleString('es-BO')}**</div>
           <div style={{ fontSize: '7px', marginTop: '4px' }}>
-            Este documento es un comprobante de venta no válido como factura
+            **Este documento es un comprobante de venta no válido como factura**
           </div>
         </div>
       </div>
