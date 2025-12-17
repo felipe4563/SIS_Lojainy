@@ -18,7 +18,7 @@ const app = express();
 
 const allowedOrigins = [
   'http://localhost:5173',
-  'https://boutiquelojainy.com',  
+  'https://boutique.lojainy.com',  
 ];
 
 app.use(
